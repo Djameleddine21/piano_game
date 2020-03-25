@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:piano_game/components/LineDivider.dart';
+import 'package:piano_game/components/line.dart';
 import 'package:piano_game/model/Note.dart';
 
 class HomePage extends StatefulWidget {
@@ -7,8 +8,12 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   List<Note> notes = initNotes();
+  int currentNoteIndex = 0;
+  AnimationController animationController;
+
   static List<Note> initNotes() {
     return [
       Note(0, 0),
@@ -24,6 +29,40 @@ class _HomePageState extends State<HomePage> {
       Note(43, -1),
       Note(44, -1),
     ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+    animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        if (currentNoteIndex == notes.length - 4) {
+        } else {
+          setState(() => currentNoteIndex++);
+          animationController.forward(from: 0);
+        }
+      }
+    });
+    animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  _drawLine(int lineNumber) {
+    return Expanded(
+      child: Line(
+        lineIndex: lineNumber,
+        currentNotes: notes.sublist(currentNoteIndex, currentNoteIndex + 4),
+      ),
+    );
   }
 
   @override
@@ -45,13 +84,13 @@ class _HomePageState extends State<HomePage> {
             ),
             Row(
               children: <Widget>[
-                Expanded(child: Container()),
+                _drawLine(0),
                 LineDivider(),
-                Expanded(child: Container()),
+                _drawLine(1),
                 LineDivider(),
-                Expanded(child: Container()),
+                _drawLine(2),
                 LineDivider(),
-                Expanded(child: Container()),
+                _drawLine(3),
               ],
             ),
           ],
