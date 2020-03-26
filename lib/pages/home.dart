@@ -13,6 +13,7 @@ class _HomePageState extends State<HomePage>
   List<Note> notes = initNotes();
   int currentNoteIndex = 0;
   AnimationController animationController;
+  int score = 0;
 
   static List<Note> initNotes() {
     return [
@@ -22,6 +23,39 @@ class _HomePageState extends State<HomePage>
       Note(3, 1),
       Note(4, 3),
       Note(5, 0),
+      Note(6, 2),
+      Note(7, 3),
+      Note(8, 2),
+      Note(9, 1),
+      Note(10, 0),
+      Note(11, 2),
+      Note(12, 1),
+      Note(13, 0),
+      Note(14, 3),
+      Note(15, 1),
+      Note(16, 0),
+      Note(17, 2),
+      Note(18, 1),
+      Note(19, 3),
+      Note(20, 2),
+      Note(21, 0),
+      Note(22, 1),
+      Note(23, 3),
+      Note(24, 2),
+      Note(25, 1),
+      Note(26, 0),
+      Note(27, 3),
+      Note(28, 1),
+      Note(29, 0),
+      Note(30, 2),
+      Note(31, 3),
+      Note(32, 1),
+      Note(33, 2),
+      Note(34, 0),
+      Note(35, 1),
+      Note(36, 3),
+      Note(37, 1),
+      Note(38, 0),
       Note(39, 2),
       Note(40, 3),
       Note(41, -1),
@@ -40,7 +74,7 @@ class _HomePageState extends State<HomePage>
     );
     animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        if (currentNoteIndex == notes.length - 4) {
+        if (currentNoteIndex == notes.length - 5) {
         } else {
           setState(() => currentNoteIndex++);
           animationController.forward(from: 0);
@@ -60,7 +94,32 @@ class _HomePageState extends State<HomePage>
     return Expanded(
       child: Line(
         lineIndex: lineNumber,
-        currentNotes: notes.sublist(currentNoteIndex, currentNoteIndex + 4),
+        currentNotes: notes.sublist(currentNoteIndex, currentNoteIndex + 5),
+        animation: animationController,
+        onTileTap: _onTap,
+      ),
+    );
+  }
+
+  void _onTap(Note note) {
+    setState(() {
+      note.state = NoteState.tapped;
+      score++;
+    });
+  }
+
+  _drawScore() {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 30.0),
+        child: Text(
+          "$score",
+          style: TextStyle(
+            color: Colors.orangeAccent,
+            fontSize: 50.0,
+          ),
+        ),
       ),
     );
   }
@@ -93,6 +152,7 @@ class _HomePageState extends State<HomePage>
                 _drawLine(3),
               ],
             ),
+            _drawScore(),
           ],
         ),
       ),
