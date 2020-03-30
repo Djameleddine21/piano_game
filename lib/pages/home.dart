@@ -1,3 +1,4 @@
+import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:piano_game/components/LineDivider.dart';
 import 'package:piano_game/components/line.dart';
@@ -14,6 +15,9 @@ class _HomePageState extends State<HomePage>
   int currentNoteIndex = 0;
   AnimationController animationController;
   int score = 0;
+  bool isStarted = false;
+  AudioCache _player = AudioCache();
+  bool isPlaying = true;
 
   static List<Note> initNotes() {
     return [
@@ -68,20 +72,25 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 300),
-    );
+    animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
     animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        if (currentNoteIndex == notes.length - 5) {
+      if (status == AnimationStatus.completed && isPlaying) {
+        if (notes[currentNoteIndex].state != NoteState.tapped) {
+          setState(() {
+            isPlaying = false;
+            notes[currentNoteIndex].state = NoteState.missed;
+          });
+          animationController.reverse().then((_) => _showFinishDialog());
+        } else if (currentNoteIndex == notes.length - 5) {
+          //song finished
+          _showFinishDialog();
         } else {
-          setState(() => currentNoteIndex++);
+          setState(() => ++currentNoteIndex);
           animationController.forward(from: 0);
         }
       }
     });
-    animationController.forward();
   }
 
   @override
@@ -102,10 +111,39 @@ class _HomePageState extends State<HomePage>
   }
 
   void _onTap(Note note) {
-    setState(() {
-      note.state = NoteState.tapped;
-      score++;
-    });
+    bool _previousTapped = notes
+        .sublist(0, note.orderNumber)
+        .every((n) => n.state == NoteState.tapped);
+    if (_previousTapped) {
+      if (!isStarted) {
+        setState(() {
+          isStarted = false;
+          animationController.forward();
+        });
+      }
+      _playnote(note);
+      setState(() {
+        note.state = NoteState.tapped;
+        score++;
+      });
+    }
+  }
+
+  _playnote(Note note) {
+    switch (note.line) {
+      case 0:
+        _player.play('a.wav');
+        return;
+      case 1:
+        _player.play('c.wav');
+        return;
+      case 2:
+        _player.play('e.wav');
+        return;
+      case 3:
+        _player.play('f.wav');
+        return;
+    }
   }
 
   _drawScore() {
@@ -122,6 +160,34 @@ class _HomePageState extends State<HomePage>
         ),
       ),
     );
+  }
+
+  void _showFinishDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Score: $score"),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("RESTART"),
+            ),
+          ],
+        );
+      },
+    ).then((_) => _restart());
+  }
+
+  void _restart() {
+    setState(() {
+      isStarted = false;
+      isPlaying = true;
+      notes = initNotes();
+      score = 0;
+      currentNoteIndex = 0;
+    });
+    animationController.reset();
   }
 
   @override

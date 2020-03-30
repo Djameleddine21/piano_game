@@ -14,7 +14,7 @@ class Tile extends StatelessWidget {
       width: double.infinity,
       height: height,
       child: GestureDetector(
-        onTapDown: (_) => onTap,
+        onTapDown: (_) => onTap(),
         child: Container(color: color),
       ),
     );
