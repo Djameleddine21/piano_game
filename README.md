@@ -1,16 +1,11 @@
 # piano_game
 
-A new Flutter project.
+In this project i try to clone a game called Piano solo
 
-## Getting Started
+## Demo
 
-This project is a starting point for a Flutter application.
+Some screenshots of the app and video:
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+[](https://github.com/Djameleddine21/piano_game/blob/master/assets/demo/01.jpg)
+[](https://github.com/Djameleddine21/piano_game/blob/master/assets/demo/02.jpg)
+[](https://github.com/Djameleddine21/piano_game/blob/master/assets/demo/video.mp4)
